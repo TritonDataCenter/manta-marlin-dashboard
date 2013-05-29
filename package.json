@@ -1,0 +1,9 @@
+{
+	"name": "marlin-dashboard",
+	"version": "0.1.0",
+	"description": "marlin dashboard server",
+	"private": true,
+	"dependencies": {
+		"kang": "0.0.5"
+	}
+}

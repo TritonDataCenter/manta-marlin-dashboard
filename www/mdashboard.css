@@ -1,0 +1,71 @@
+/*
+ * mdashboard.css: Marlin dashboard CSS styles
+ */
+
+div.mSection
+{
+	margin-bottom: 20px;
+}
+
+div.mUpdateTime
+{
+	font-size: small;
+	width: 250px;
+}
+
+table.mDataTable
+{
+	font-size: small;
+}
+
+table.mDataTable tr
+{
+	vertical-align: top;
+}
+
+table.mDataTable th,
+table.mDataTable td
+{
+	white-space: nowrap;
+}
+
+table.mDataTable td
+{
+	text-align: right;
+}
+
+/*
+ * Zone state table
+ */
+table#mZoneStates
+{
+	width: 100%;
+}
+
+table#mZoneStates tr
+{
+	vertical-align: middle;
+}
+
+div.mRowLabel
+{
+	white-space: nowrap;
+}
+
+div.mZoneStateB { background-color: #000000 }
+div.mZoneStateD { background-color: #cc0000 }
+div.mZoneStateR { background-color: #ffffff }
+div.mZoneStateU { background-color: #ffff00 }
+
+div.mZoneRow
+{
+	white-space: nowrap;
+}
+
+div.mZoneRow *
+{
+	border: 1px #cccccc solid;
+	width: 5px;
+	height: 5px;
+	float: left;
+}
