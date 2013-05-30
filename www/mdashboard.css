@@ -47,11 +47,6 @@ table#mZoneStates tr
 	vertical-align: middle;
 }
 
-div.mRowLabel
-{
-	white-space: nowrap;
-}
-
 div.mZoneStateB { background-color: #000000 }
 div.mZoneStateD { background-color: #cc0000 }
 div.mZoneStateR { background-color: #ffffff }
@@ -59,13 +54,40 @@ div.mZoneStateU { background-color: #ffff00 }
 
 div.mZoneRow
 {
-	white-space: nowrap;
+	text-align: left;
+	line-height: 10px;
+	height: 10px;
 }
 
 div.mZoneRow *
 {
-	border: 1px #cccccc solid;
-	width: 5px;
-	height: 5px;
-	float: left;
+	border-top: 1px #cccccc solid;
+	border-right: 1px #cccccc solid;
+	border-bottom: 1px #cccccc solid;
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+}
+
+div.mZoneRow :first-child
+{
+	border-left: 1px #cccccc solid;
+}
+
+div.mZoneRow *:hover
+{
+	border: 1px #000000 solid;
+	cursor: pointer;
+}
+
+div.mZoneStateLegend
+{
+	margin-top: 10px;
+	margin-left: 50px;
+}
+
+div.mZoneStateLegend td
+{
+	padding-left: 10px;
+	padding-right: 10px;
 }

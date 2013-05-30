@@ -81,7 +81,8 @@ var mTableConfig = {
 var spanUpdateTime;				/* last updated time */
 
 /* Application configuration */
-var mServerUrl = window.location.origin;	/* kang proxy server location */
+//var mServerUrl = window.location.origin;	/* kang proxy server location */
+var mServerUrl = 'http://localhost:5290';	/* kang proxy server location */
 var mRefreshInterval = 1000;			/* ms between refreshes */
 
 /* Application state */
@@ -187,7 +188,7 @@ function mLoadData(data)
 				continue;
 
 			e = zonedata[o['origin']];
-			e['data'][e['i']++] = o['state'][0];
+			e['data'][e['i']++] = [ k, o['state'][0] ];
 		}
 
 		mZoneStates.zs_data = zonedata;
@@ -252,10 +253,11 @@ function mLoadData(data)
 				    svcs[o['origin']][0]['ident'],
 				    o['jobid'],
 				    o['phasei'],
-				    o['phase']['type'] +
+				    o['phase'] ?
+					(o['phase']['type'] +
 				        (o['phase']['type'] == 'reduce' ?
 				        ' (' + (o['phase']['count'] || 1) +
-					')' : ''),
+					')' : '')) : 'unknown',
 				    o['ntasks'],
 				    o['nrunning'],
 				    o['nstreams'],
@@ -335,17 +337,23 @@ mZoneStateWidget.prototype.redraw = function ()
 	rows = [];
 
 	for (k in data) {
-		div = document.createElement('div');
+		wrap = document.createElement('div');
+		div = wrap.appendChild(document.createElement('div'));
 		div.className = 'mZoneRow';
 
-		data[k]['data'].forEach(function (s) {
+		data[k]['data'].forEach(function (s, i) {
 			var elt = div.appendChild(
 			    document.createElement('div'));
-			elt.className = 'mZoneState' + s.toUpperCase();
+			elt.className = 'mZoneState' + s[1].toUpperCase();
+			elt.title = s[0];
+
+			if (i % 32 == 31) {
+				div = wrap.appendChild(
+				    document.createElement('div'));
+				div.className = 'mZoneRow';
+			}
 		});
 
-		wrap = document.createElement('div');
-		wrap.appendChild(div);
 		rows.push([ data[k]['label'], wrap.innerHTML ]);
 	}
 
