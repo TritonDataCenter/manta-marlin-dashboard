@@ -18,6 +18,8 @@ var mSources;
 var mHeaders = {
     'access-control-allow-origin': '*'
 };
+var mLastSnapshot = undefined;
+var mLastTime = undefined;
 
 function usage()
 {
@@ -91,6 +93,13 @@ function mkHeaders(headers)
 
 function onMarlinRequest(request, response)
 {
+	if (mLastSnapshot !== undefined &&
+	    Date.now() - mLastTime < 1000) {
+		response.writeHead(200, mkHeaders({}));
+		response.end(JSON.stringify(mLastSnapshot));
+		return;
+	}
+
 	mod_kang.knFetchAll({ sources: mSources }, function (err, snapshot) {
 		if (err) {
 			response.writeHead(500, mkHeaders({}));
@@ -98,6 +107,8 @@ function onMarlinRequest(request, response)
 			return;
 		}
 
+		mLastSnapshot = snapshot;
+		mLastTime = Date.now();
 		response.writeHead(200, mkHeaders({}));
 		response.end(JSON.stringify(snapshot));
 	});
