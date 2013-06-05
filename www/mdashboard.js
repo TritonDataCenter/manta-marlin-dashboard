@@ -81,8 +81,7 @@ var mTableConfig = {
 var spanUpdateTime;				/* last updated time */
 
 /* Application configuration */
-//var mServerUrl = window.location.origin;	/* kang proxy server location */
-var mServerUrl = 'http://localhost:5290';	/* kang proxy server location */
+var mServerUrl = window.location.origin;	/* kang proxy server location */
 var mRefreshInterval = 1000;			/* ms between refreshes */
 
 /* Application state */
