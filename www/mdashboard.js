@@ -223,6 +223,9 @@ function mLoadData(data)
 					break;
 			}
 
+			if (svcs[o['origin']][0]['component'] != 'jobworker')
+				continue;
+
 			r = [
 			    o['record']['jobId'],
 			    o['record']['auth']['login'],
