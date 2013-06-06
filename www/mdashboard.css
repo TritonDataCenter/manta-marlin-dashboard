@@ -2,6 +2,11 @@
  * mdashboard.css: Marlin dashboard CSS styles
  */
 
+.mUuid
+{
+	font-family: monospace;
+}
+
 div.mSection
 {
 	margin-bottom: 20px;

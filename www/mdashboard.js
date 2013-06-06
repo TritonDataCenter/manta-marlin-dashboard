@@ -16,31 +16,15 @@ var mTableConfig = {
 	'domid': 'mSupervisorTable',
 	'config': {
 	    'aoColumns': [
-		{ 'sTitle': 'Supervisor' },
-		{ 'sTitle': 'AuthsPend' },
-		{ 'sTitle': 'LocsPend' },
-		{ 'sTitle': 'DelsPend' },
-		{ 'sTitle': 'LocReq' },
-		{ 'sTitle': 'LocRes' },
-		{ 'sTitle': 'AuthReq' },
-		{ 'sTitle': 'AuthRes' }
-	    ]
-	}
-    },
-    'agents': {
-	'domid': 'mAgentTable',
-	'config': {
-	    'aoColumns': [
-		{ 'sTitle': 'Agent' },
-		{ 'sTitle': 'Tasks' },
-		{ 'sTitle': 'DiskU' },
-		{ 'sTitle': 'Disk' },
-		{ 'sTitle': 'MemU' },
-		{ 'sTitle': 'Mem' },
-		{ 'sTitle': 'Zones' },
-		{ 'sTitle': 'Busy' },
-		{ 'sTitle': 'Reset' },
-		{ 'sTitle': 'Dis' }
+		{ 'sTitle': 'Supervisor',
+		    'sClass': 'mUuid', 'sType': 'numeric' },
+		{ 'sTitle': 'AuthP' },
+		{ 'sTitle': 'LocsP' },
+		{ 'sTitle': 'DelsP' },
+		{ 'sTitle': 'LRq' },
+		{ 'sTitle': 'LRs' },
+		{ 'sTitle': 'ARq' },
+		{ 'sTitle': 'ARs' }
 	    ]
 	}
     },
@@ -48,7 +32,7 @@ var mTableConfig = {
 	'domid': 'mJobTable',
 	'config': {
 	    'aoColumns': [
-		{ 'sTitle': 'Jobid' },
+		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'User' },
 		{ 'sTitle': 'Asgn' },
 		{ 'sTitle': 'InProc' },
@@ -65,7 +49,7 @@ var mTableConfig = {
 	'config': {
 	    'aoColumns': [
 		{ 'sTitle': 'Server' },
-		{ 'sTitle': 'Jobid' },
+		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'Ph' },
 		{ 'sTitle': 'Kind' },
 		{ 'sTitle': 'Queued' },
@@ -134,27 +118,24 @@ function mLoadData(data)
 
 	svcs = data.cs_objects['service'];
 
-	rows = [];
 	if (data.cs_objects['agent']) {
 		for (k in data.cs_objects['agent']) {
 			o = data.cs_objects['agent'][k][0];
 			r = [
-			    o['agent'],
+			    svcs[o['origin']][0]['ident'],
 			    o['nTasks'],
-			    o['slopDiskUsed'],
-			    o['slopDiskTotal'] + 'GB',
-			    o['slopMemUsed'],
-			    o['slopMemTotal'] + 'MB',
+			    o['slopDiskUsed'] + ' / ' +
+			        o['slopDiskTotal'] + 'GB',
+			    o['slopMemUsed'] + ' / ' +
+			        o['slopMemTotal'] + 'MB',
 			    0,	/* total nzones */
 			    0,	/* nbusy */
 			    0,	/* ninit */
 			    0 	/* ndisabled */
 			];
-			rows.push(r);
 			rowbyagent[o['origin']] = r;
 		}
 	}
-	mTables['agents'].t_rows = rows;
 
 	if (data.cs_objects['zone']) {
 		for (k in data.cs_objects['zone']) {
@@ -163,18 +144,19 @@ function mLoadData(data)
 			if (!r)
 				continue;
 
-			r[6]++;
+			r[4]++;
 			if (o['state'] == 'busy')
-				r[7]++;
+				r[5]++;
 			else if (o['state'] == 'uninit')
-				r[8]++;
+				r[6]++;
 			else if (o['state'] == 'disabled')
-				r[9]++;
+				r[7]++;
 		}
 
 		for (k in rowbyagent) {
 			zonedata[k] = {
 			    'i': 0,
+			    'values': rowbyagent[k],
 			    'data': new Array(rowbyagent[k][6]),
 			    'label': svcs[k][0]['ident']
 			};
@@ -324,8 +306,15 @@ function mZoneStateWidget(key, domid)
 	    'domid': domid,
 	    'config': {
 	        'aoColumns': [
-		    { 'sTitle': 'Server', 'sClass': 'mRowLabel' },
-		    { 'sTitle': 'Zones', 'sWidth': '80%' }
+		    { 'sTitle': 'Agent' },
+		    { 'sTitle': 'Tasks' },
+		    { 'sTitle': 'Disk slop used' },
+		    { 'sTitle': 'Mem slop used' },
+		    { 'sTitle': 'Z' },
+		    { 'sTitle': 'B' },
+		    { 'sTitle': 'R' },
+		    { 'sTitle': 'D' },
+		    { 'sTitle': 'Zones' }
 		]
 	    }
 	});
@@ -334,7 +323,7 @@ function mZoneStateWidget(key, domid)
 mZoneStateWidget.prototype.redraw = function ()
 {
 	var data = this.zs_data;
-	var rows, div, wrap, k;
+	var rows, div, wrap, k, row;
 
 	rows = [];
 
@@ -356,7 +345,9 @@ mZoneStateWidget.prototype.redraw = function ()
 			}
 		});
 
-		rows.push([ data[k]['label'], wrap.innerHTML ]);
+		row = data[k]['values'].slice(0);
+		row.push(wrap.innerHTML);
+		rows.push(row);
 	}
 
 	this.zs_table.t_rows = rows;
