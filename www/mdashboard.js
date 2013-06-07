@@ -54,10 +54,21 @@ var mTableConfig = {
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'Ph' },
 		{ 'sTitle': 'Kind' },
-		{ 'sTitle': 'Queued' },
-		{ 'sTitle': 'Running' },
+		{ 'sTitle': 'Qd' },
+		{ 'sTitle': 'Run' },
 		{ 'sTitle': 'Share' },
 		{ 'sTitle': 'Zones' }
+	    ]
+	}
+    },
+    'streams': {
+	'domid': 'mStreamsTable',
+	'autolink': [ 0, 1 ],
+	'config': {
+	    'aoColumns': [
+		{ 'sTitle': 'Server' },
+		{ 'sTitle': 'Jobid / phase / machine', 'sClass': 'mUuid' },
+		{ 'sTitle': 'Last task started' }
 	    ]
 	}
     }
@@ -85,6 +96,9 @@ function mInit()
 		mTables[k] = new mTable(k, mTableConfig[k]);
 	mZoneStates = new mZoneStateWidget('zonegrid', 'mZoneStates');
 	spanUpdateTime = document.getElementById('mUpdateTime');
+
+	$('#tabs').tab();
+	$('#inner-tabs').tab();
 
 	mRedrawWorld();
 	mRefresh();
@@ -261,6 +275,25 @@ function mLoadData(data)
 		}
 	}
 	mTables['groups'].t_rows = rows;
+
+	rows = [];
+	if (data.cs_objects['taskstream']) {
+		for (k in data.cs_objects['taskstream']) {
+			data.cs_objects['taskstream'][k].forEach(function (g) {
+				o = g;
+				if (!svcs[o['origin']])
+					return;
+				r = [
+				    svcs[o['origin']][0]['ident'],
+				    o['id'],
+				    o['taskStart'] || 'N/A'
+				];
+				rows.push(r);
+				mDetails[o['id']] = o;
+			});
+		}
+	}
+	mTables['streams'].t_rows = rows;
 }
 
 function mTable(key, conf)
@@ -358,7 +391,7 @@ mZoneStateWidget.prototype.redraw = function ()
 			elt.className = 'mZoneState' + s[1].toUpperCase();
 			elt.title = s[0];
 
-			if (i % 32 == 31) {
+			if (i % 16 == 15) {
 				div = wrap.appendChild(
 				    document.createElement('div'));
 				div.className = 'mZoneRow';
@@ -393,7 +426,7 @@ function mDetailShow(id)
 	    '<button class="btn" data-dismiss="modal" aria-hidden="true">' +
 	        'Close</button>',
 	    '</div>',
-	    '</div>',
+	    '</div>'
 	].join('\n');
 
 	$(html).modal({ 'show': true });

@@ -23,6 +23,18 @@ div.mSection
 	margin-bottom: 20px;
 }
 
+div.mBottomTab
+{
+	min-height: 400px;
+}
+
+div.mBottomSpacer
+{
+	margin-top: 20px;
+	height: 50px;
+	width: 100%;
+}
+
 div.mUpdateTime
 {
 	font-size: small;
@@ -31,7 +43,8 @@ div.mUpdateTime
 
 table.mDataTable
 {
-	font-size: small;
+	font-size: x-small;
+	margin-left: 0px;
 }
 
 table.mDataTable tr
@@ -71,8 +84,8 @@ div.mZoneStateU { background-color: #ffff00 }
 div.mZoneRow
 {
 	text-align: left;
-	line-height: 10px;
-	height: 10px;
+	line-height: 8px;
+	height: 8px;
 }
 
 div.mZoneRow *
@@ -80,8 +93,8 @@ div.mZoneRow *
 	border-top: 1px #cccccc solid;
 	border-right: 1px #cccccc solid;
 	border-bottom: 1px #cccccc solid;
-	width: 10px;
-	height: 10px;
+	width: 8px;
+	height: 8px;
 	display: inline-block;
 }
 
