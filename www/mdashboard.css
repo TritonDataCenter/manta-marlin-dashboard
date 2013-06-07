@@ -7,6 +7,17 @@
 	font-family: monospace;
 }
 
+div.mModal .modal-body
+{
+	max-height: 800px;
+}
+
+div.mModal
+{
+	width: 800px;
+	margin: 0px -250px 0px -400px;
+}
+
 div.mSection
 {
 	margin-bottom: 20px;
@@ -44,7 +55,7 @@ table.mDataTable td
  */
 table#mZoneStates
 {
-	width: 100%;
+	width: 95%;
 }
 
 table#mZoneStates tr

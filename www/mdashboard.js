@@ -14,10 +14,10 @@ var mTableCommonConfig = {
 var mTableConfig = {
     'supervisors': {
 	'domid': 'mSupervisorTable',
+	'autolink': [ 0 ],
 	'config': {
 	    'aoColumns': [
-		{ 'sTitle': 'Supervisor',
-		    'sClass': 'mUuid', 'sType': 'numeric' },
+		{ 'sTitle': 'Supervisor', 'sClass': 'mUuid' },
 		{ 'sTitle': 'AuthP' },
 		{ 'sTitle': 'LocsP' },
 		{ 'sTitle': 'DelsP' },
@@ -30,6 +30,7 @@ var mTableConfig = {
     },
     'jobs': {
 	'domid': 'mJobTable',
+	'autolink': [ 0 ],
 	'config': {
 	    'aoColumns': [
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
@@ -46,6 +47,7 @@ var mTableConfig = {
     },
     'groups': {
 	'domid': 'mRunningGroupsTable',
+	'autolink': [ 0 ],
 	'config': {
 	    'aoColumns': [
 		{ 'sTitle': 'Server' },
@@ -73,6 +75,7 @@ var mTables = {};
 var mZoneStates;
 var mUpdateTime;
 var mSnapshot;
+var mDetails;
 
 function mInit()
 {
@@ -111,6 +114,7 @@ function mLoadData(data)
 {
 	mUpdateTime = new Date();
 	mSnapshot = data;
+	mDetails = {};
 
 	var svcs, rows, k, o, r, i, e;
 	var rowbyagent = {};
@@ -121,6 +125,7 @@ function mLoadData(data)
 	if (data.cs_objects['agent']) {
 		for (k in data.cs_objects['agent']) {
 			o = data.cs_objects['agent'][k][0];
+			mDetails[svcs[o['origin']][0]['ident']] = o;
 			r = [
 			    svcs[o['origin']][0]['ident'],
 			    o['nTasks'],
@@ -179,6 +184,7 @@ function mLoadData(data)
 	if (data.cs_objects['worker']) {
 		for (k in data.cs_objects['worker']) {
 			o = data.cs_objects['worker'][k][0];
+			mDetails[o['conf']['instanceUuid']] = o;
 			r = [
 			    o['conf']['instanceUuid'],
 			    o['nLocs'],
@@ -189,6 +195,7 @@ function mLoadData(data)
 			    o['nAuthsOut'],
 			    o['nDels']
 			];
+			delete (o['conf']);
 			rows.push(r);
 		}
 	}
@@ -207,6 +214,8 @@ function mLoadData(data)
 
 			if (svcs[o['origin']][0]['component'] != 'jobworker')
 				continue;
+
+			mDetails[o['record']['jobId']] = o['record'];
 
 			r = [
 			    o['record']['jobId'],
@@ -261,6 +270,7 @@ function mTable(key, conf)
 	this.t_rows = [];
 	this.t_config = {};
 	this.t_drawn = false;
+	this.t_autolink = conf['autolink'] || [];
 
 	var k;
 	for (k in mTableCommonConfig)
@@ -274,12 +284,21 @@ mTable.prototype.redraw = function ()
 	if (this.t_drawn)
 		$(this.t_elt).dataTable().fnDestroy();
 
+	var t = this;
+	this.t_autolink.forEach(function (col) {
+		t.t_rows.forEach(function (row) {
+			row[col] = '<a href="javascript:mDetailShow(\'' +
+			    row[col] + '\');">' + row[col] + '</a>';
+		});
+	});
+
 	var conf = {};
 	for (var k in this.t_config)
 		conf[k] = this.t_config[k];
 	conf['aaData'] = this.t_rows;
 	$(this.t_elt).dataTable(conf);
 	this.t_drawn = true;
+
 };
 
 function mFormatDate(time)
@@ -304,6 +323,7 @@ function mZoneStateWidget(key, domid)
 	this.zs_data = {};
 	this.zs_table = new mTable(key, {
 	    'domid': domid,
+	    'autolink': [ 0 ],
 	    'config': {
 	        'aoColumns': [
 		    { 'sTitle': 'Agent' },
@@ -353,3 +373,28 @@ mZoneStateWidget.prototype.redraw = function ()
 	this.zs_table.t_rows = rows;
 	this.zs_table.redraw();
 };
+
+function mDetailShow(id)
+{
+	var html = [
+	    '<div class="mModal modal hide face" role="dialog" ' +
+	        'aria-hidden="true">',
+	    '<div class="modal-header">',
+	    '<button type="button" class="close" data-dismiss="modal" ' +
+	        'aria-hidden="true">×</button>',
+	    '<h3>Details for ' + id + '</h3>',
+	    '</div>',
+	    '<div class="modal-body">',
+	    '<pre>',
+	    JSON.stringify(mDetails[id], false, 4),
+	    '</pre>',
+	    '</div>',
+	    '<div class="modal-footer">',
+	    '<button class="btn" data-dismiss="modal" aria-hidden="true">' +
+	        'Close</button>',
+	    '</div>',
+	    '</div>',
+	].join('\n');
+
+	$(html).modal({ 'show': true });
+}
