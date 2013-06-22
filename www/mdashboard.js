@@ -56,8 +56,8 @@ var mTableConfig = {
 		{ 'sTitle': 'Kind' },
 		{ 'sTitle': 'Qd' },
 		{ 'sTitle': 'Run' },
-		{ 'sTitle': 'Share' },
-		{ 'sTitle': 'Zones' }
+		{ 'sTitle': 'Zones' },
+		{ 'sTitle': 'Share' }
 	    ]
 	}
     },
