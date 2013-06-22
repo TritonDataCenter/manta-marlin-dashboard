@@ -78,8 +78,12 @@ var mTableConfig = {
 var spanUpdateTime;				/* last updated time */
 
 /* Application configuration */
-var mServerUrl = window.location.origin;	/* kang proxy server location */
-var mRefreshInterval = 1000;			/* ms between refreshes */
+var mRefreshInterval = 5000;			/* ms between refreshes */
+var mServerUrl;					/* kang proxy server location */
+if (window.location.hash)
+	mServerUrl = window.location.hash.substr(1);
+else
+	mServerUrl = window.location.origin;
 
 /* Application state */
 var mTables = {};
