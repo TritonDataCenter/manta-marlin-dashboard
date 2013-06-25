@@ -37,6 +37,7 @@ var mTableConfig = {
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'User' },
 		{ 'sTitle': 'Started' },
+		{ 'sTitle': 'Zones' },
 		{ 'sTitle': 'Asgn' },
 		{ 'sTitle': 'InProc' },
 		{ 'sTitle': 'TasksDisp' },
@@ -175,6 +176,7 @@ function mLoadData(data)
 	var svcs, rows, k, o, r, i, e;
 	var rowbyagent = {};
 	var zonedata = {};
+	var rowbyjob = {};
 
 	svcs = data.cs_objects['service'];
 
@@ -281,6 +283,7 @@ function mLoadData(data)
 			    o['record']['jobId'],
 			    o['record']['auth']['login'],
 			    o['record']['timeCreated'].substr(5, 14),
+			    0,
 			    o['record']['stats']['nAssigns'],
 			    o['record']['stats']['nInputsRead'],
 			    o['record']['stats']['nTasksDispatched'],
@@ -290,6 +293,7 @@ function mLoadData(data)
 			    o['record']['stats']['nRetries'],
 			    o['record']['stats']['nErrors']
 			];
+			rowbyjob[o['record']['jobId']] = r;
 
 			rows.push(r);
 		}
@@ -318,6 +322,7 @@ function mLoadData(data)
 				    o['share']
 				];
 				rows.push(r);
+				rowbyjob[o['jobid']][3] += o['nrunning'];
 			});
 		}
 	}
