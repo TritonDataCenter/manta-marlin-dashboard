@@ -76,6 +76,7 @@ var mTableConfig = {
 
 /* DOM elements */
 var spanUpdateTime;				/* last updated time */
+var divErrorContainer;				/* error alert */
 
 /* Application configuration */
 var mRefreshInterval = 5000;			/* ms between refreshes */
@@ -91,6 +92,7 @@ var mZoneStates;
 var mUpdateTime;
 var mSnapshot;
 var mDetails;
+var mRefreshOkay = true;
 
 function mInit()
 {
@@ -100,6 +102,7 @@ function mInit()
 		mTables[k] = new mTable(k, mTableConfig[k]);
 	mZoneStates = new mZoneStateWidget('zonegrid', 'mZoneStates');
 	spanUpdateTime = document.getElementById('mUpdateTime');
+	divErrorContainer = document.getElementById('mErrorContainer');
 
 	$('#tabs').tab();
 	$('#inner-tabs').tab();
@@ -119,12 +122,45 @@ function mRedrawWorld()
 	spanUpdateTime.firstChild.nodeValue = mFormatDate(mUpdateTime);
 }
 
+function mShowError(message, extra)
+{
+	var div = $('<div class="alert alert-error">' + message + '</div>');
+
+	if (divErrorContainer.firstChild) {
+		divErrorContainer.replaceChild(
+		    divErrorContainer.firstChild, div);
+	} else {
+		divErrorContainer.appendChild(div[0]);
+	}
+}
+
+function mHideError()
+{
+	if (divErrorContainer.firstChild)
+		divErrorContainer.removeChild(divErrorContainer.firstChild);
+}
+
 function mRefresh()
 {
-	$.getJSON(mServerUrl + '/marlin', function (data) {
+	$.ajax({
+	    'url': mServerUrl + '/marlin',
+	    'dataType': 'json',
+	    'success': function (data) {
+		mHideError();
 		mLoadData(data);
 		mRedrawWorld();
+		mRefreshOkay = true;
 		setTimeout(mRefresh, mRefreshInterval);
+	    },
+	    'error': function (data) {
+		if (mRefreshOkay) {
+			mShowError('Failed to refresh dashboard (will retry)');
+			mRefreshOkay = false;
+		}
+
+		setTimeout(mRefresh, mRefreshInterval);
+		console.error('failed to refresh dashboard:', data);
+	    }
 	});
 }
 
