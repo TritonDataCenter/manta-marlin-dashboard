@@ -36,6 +36,7 @@ var mTableConfig = {
 	    'aoColumns': [
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'User' },
+		{ 'sTitle': 'Started' },
 		{ 'sTitle': 'Asgn' },
 		{ 'sTitle': 'InProc' },
 		{ 'sTitle': 'TasksDisp' },
@@ -279,6 +280,7 @@ function mLoadData(data)
 			r = [
 			    o['record']['jobId'],
 			    o['record']['auth']['login'],
+			    o['record']['timeCreated'].substr(5, 14),
 			    o['record']['stats']['nAssigns'],
 			    o['record']['stats']['nInputsRead'],
 			    o['record']['stats']['nTasksDispatched'],
