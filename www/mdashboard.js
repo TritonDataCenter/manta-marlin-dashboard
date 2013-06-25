@@ -18,6 +18,7 @@ var mTableConfig = {
 	'config': {
 	    'aoColumns': [
 		{ 'sTitle': 'Supervisor', 'sClass': 'mUuid' },
+		{ 'sTitle': 'Started' },
 		{ 'sTitle': 'AuthP' },
 		{ 'sTitle': 'LocsP' },
 		{ 'sTitle': 'DelsP' },
@@ -182,6 +183,8 @@ function mLoadData(data)
 			mDetails[svcs[o['origin']][0]['ident']] = o;
 			r = [
 			    svcs[o['origin']][0]['ident'],
+			    data.cs_objects['stats'][o['origin']][0]['started'].
+			        substr(5, 14),
 			    o['nTasks'],
 			    o['slopDiskUsed'] + ' / ' +
 			        o['slopDiskTotal'] + 'GB',
@@ -203,13 +206,13 @@ function mLoadData(data)
 			if (!r)
 				continue;
 
-			r[4]++;
+			r[5]++;
 			if (o['state'] == 'busy')
-				r[5]++;
-			else if (o['state'] == 'uninit')
 				r[6]++;
-			else if (o['state'] == 'disabled')
+			else if (o['state'] == 'uninit')
 				r[7]++;
+			else if (o['state'] == 'disabled')
+				r[8]++;
 		}
 
 		for (k in rowbyagent) {
@@ -241,6 +244,8 @@ function mLoadData(data)
 			mDetails[o['conf']['instanceUuid']] = o;
 			r = [
 			    o['conf']['instanceUuid'],
+			    data.cs_objects['stats'][o['origin']][0]['started'].
+			        substr(5, 14),
 			    o['nLocs'],
 			    o['nLocIn'],
 			    o['nLocOut'],
@@ -400,6 +405,7 @@ function mZoneStateWidget(key, domid)
 	    'config': {
 	        'aoColumns': [
 		    { 'sTitle': 'Agent' },
+		    { 'sTitle': 'Started' },
 		    { 'sTitle': 'Tasks' },
 		    { 'sTitle': 'Disk slop used' },
 		    { 'sTitle': 'Mem slop used' },
@@ -431,7 +437,7 @@ mZoneStateWidget.prototype.redraw = function ()
 			elt.className = 'mZoneState' + s[1].toUpperCase();
 			elt.title = s[0];
 
-			if (i % 16 == 15) {
+			if (i % 32 == 31) {
 				div = wrap.appendChild(
 				    document.createElement('div'));
 				div.className = 'mZoneRow';
