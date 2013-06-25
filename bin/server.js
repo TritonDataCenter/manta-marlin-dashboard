@@ -20,6 +20,7 @@ var mHeaders = {
 };
 var mLastSnapshot = undefined;
 var mLastTime = undefined;
+var mPending = [];
 
 function usage()
 {
@@ -100,17 +101,35 @@ function onMarlinRequest(request, response)
 		return;
 	}
 
-	mod_kang.knFetchAll({ sources: mSources }, function (err, snapshot) {
-		if (err) {
-			response.writeHead(500, mkHeaders({}));
-			response.end(JSON.stringify({ 'error': err.message }));
-			return;
-		}
+	mPending.push(response);
+	if (mPending.length > 1)
+		return;
 
+	mod_kang.knFetchAll({
+	    'sources': mSources,
+	    'clientOptions': {
+		'connectTimeout': 5000
+	    }
+	}, function (err, snapshot) {
+		if (err)
+			console.error(new Date().toISOString() +
+			    ': error: ' + err);
+
+		mPending.forEach(function (res) {
+			if (!snapshot) {
+				res.writeHead(500, mkHeaders({}));
+				res.end(
+				    JSON.stringify({ 'error': err.message }));
+				return;
+			}
+
+			res.writeHead(200, mkHeaders({}));
+			res.end(JSON.stringify(snapshot));
+		});
+
+		mPending = [];
 		mLastSnapshot = snapshot;
 		mLastTime = Date.now();
-		response.writeHead(200, mkHeaders({}));
-		response.end(JSON.stringify(snapshot));
 	});
 }
 

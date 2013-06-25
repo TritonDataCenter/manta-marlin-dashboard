@@ -4,6 +4,6 @@
 	"description": "marlin dashboard server",
 	"private": true,
 	"dependencies": {
-		"kang": "0.0.6"
+		"kang": "0.0.8"
 	}
 }
