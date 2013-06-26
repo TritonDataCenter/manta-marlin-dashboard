@@ -125,13 +125,14 @@ function mRedrawWorld()
 	spanUpdateTime.firstChild.nodeValue = mFormatDate(mUpdateTime);
 }
 
-function mShowError(message, extra)
+function mShowError(message, severe)
 {
-	var div = $('<div class="alert alert-error">' + message + '</div>');
+	var div = $('<div class="alert' +
+	    (severe ? ' alert-error' : '') + '">' + message + '</div>');
 
 	if (divErrorContainer.firstChild) {
 		divErrorContainer.replaceChild(
-		    divErrorContainer.firstChild, div);
+		    div[0], divErrorContainer.firstChild);
 	} else {
 		divErrorContainer.appendChild(div[0]);
 	}
@@ -152,12 +153,15 @@ function mRefresh()
 		mHideError();
 		mLoadData(data);
 		mRedrawWorld();
+		if (data['error'])
+			mShowError('Warning: ' + data['error']);
 		mRefreshOkay = true;
 		setTimeout(mRefresh, mRefreshInterval);
 	    },
 	    'error': function (data) {
 		if (mRefreshOkay) {
-			mShowError('Failed to refresh dashboard (will retry)');
+			mShowError('Failed to refresh dashboard (will retry)',
+			    true);
 			mRefreshOkay = false;
 		}
 

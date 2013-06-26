@@ -111,9 +111,12 @@ function onMarlinRequest(request, response)
 		'connectTimeout': 5000
 	    }
 	}, function (err, snapshot) {
-		if (err)
+		if (err) {
 			console.error(new Date().toISOString() +
 			    ': error: ' + err);
+			if (snapshot)
+				snapshot.error = err.toString();
+		}
 
 		mPending.forEach(function (res) {
 			if (!snapshot) {
