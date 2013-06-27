@@ -326,7 +326,9 @@ function mLoadData(data)
 				    o['share']
 				];
 				rows.push(r);
-				rowbyjob[o['jobid']][3] += o['nrunning'];
+				if (rowbyjob[o['jobid']])
+					rowbyjob[o['jobid']][3] +=
+					    o['nrunning'];
 			});
 		}
 	}
