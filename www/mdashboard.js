@@ -336,7 +336,7 @@ function mLoadData(data)
 				];
 				rows.push(r);
 				if (rowbyjob[o['jobid']])
-					rowbyjob[o['jobid']][3] +=
+					rowbyjob[o['jobid']][4] +=
 					    o['nrunning'];
 			});
 		}
