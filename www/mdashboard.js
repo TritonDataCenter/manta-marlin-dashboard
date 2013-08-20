@@ -35,6 +35,7 @@ var mTableConfig = {
 	'config': {
 	    'aoColumns': [
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
+		{ 'sTitle': '' },
 		{ 'sTitle': 'User' },
 		{ 'sTitle': 'Started' },
 		{ 'sTitle': 'Zones' },
@@ -181,6 +182,7 @@ function mLoadData(data)
 	var rowbyagent = {};
 	var zonedata = {};
 	var rowbyjob = {};
+	var extra;
 
 	svcs = data.cs_objects['service'];
 
@@ -282,9 +284,16 @@ function mLoadData(data)
 				continue;
 
 			mDetails[o['record']['jobId']] = o['record'];
+			extra =
+			    o['record']['name'] ==
+			        'interactive compute job' &&
+			    o['record']['phases'][0].exec ==
+			        '/assets/poseidon/public/medusa/agent.sh' ?
+			    '$' : '&nbsp;';
 
 			r = [
 			    o['record']['jobId'],
+			    extra,
 			    o['record']['auth']['login'],
 			    o['record']['timeCreated'].substr(5, 14),
 			    0,
