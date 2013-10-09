@@ -51,9 +51,11 @@ var mTableConfig = {
     },
     'groups': {
 	'domid': 'mRunningGroupsTable',
-	'autolink': [ 0 ],
+	'autolink': [ 1 ],
 	'config': {
+	    'aaSorting': [ [ 0, 'asc' ], [ 1, 'asc' ], [ 2, 'asc' ] ],
 	    'aoColumns': [
+		{ 'sTitle': 'DC' },
 		{ 'sTitle': 'Server' },
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': 'Ph' },
@@ -67,9 +69,11 @@ var mTableConfig = {
     },
     'streams': {
 	'domid': 'mStreamsTable',
-	'autolink': [ 0, 1 ],
+	'autolink': [ 1, 2 ],
 	'config': {
+	    'aaSorting': [ [ 0, 'asc' ], [ 1, 'asc' ], [ 2, 'asc' ] ],
 	    'aoColumns': [
+		{ 'sTitle': 'DC' },
 		{ 'sTitle': 'Server' },
 		{ 'sTitle': 'Jobid / phase / machine', 'sClass': 'mUuid' },
 		{ 'sTitle': 'Last task started' }
@@ -180,6 +184,8 @@ function mLoadData(data)
 
 	var svcs, rows, k, o, r, i, e;
 	var rowbyagent = {};
+	var dcbyagent = {};
+	var namebyagent = {};
 	var zonedata = {};
 	var rowbyjob = {};
 	var extra;
@@ -189,9 +195,10 @@ function mLoadData(data)
 	if (data.cs_objects['agent']) {
 		for (k in data.cs_objects['agent']) {
 			o = data.cs_objects['agent'][k][0];
-			mDetails[svcs[o['origin']][0]['ident']] = o;
+			mDetails[o['hostname']] = o;
 			r = [
-			    svcs[o['origin']][0]['ident'],
+			    o['datacenter'] || '-',
+			    o['hostname'] || '-',
 			    data.cs_objects['stats'][o['origin']][0]['started'].
 			        substr(5, 14),
 			    o['nTasks'],
@@ -204,6 +211,8 @@ function mLoadData(data)
 			    0,	/* ninit */
 			    0 	/* ndisabled */
 			];
+			namebyagent[o['origin']] = o['hostname'] || o['origin'];
+			dcbyagent[o['origin']] = o['datacenter'] || '-';
 			rowbyagent[o['origin']] = r;
 		}
 	}
@@ -215,13 +224,13 @@ function mLoadData(data)
 			if (!r)
 				continue;
 
-			r[5]++;
+			r[6]++;
 			if (o['state'] == 'busy')
-				r[6]++;
-			else if (o['state'] == 'uninit')
 				r[7]++;
-			else if (o['state'] == 'disabled')
+			else if (o['state'] == 'uninit')
 				r[8]++;
+			else if (o['state'] == 'disabled')
+				r[9]++;
 		}
 
 		for (k in rowbyagent) {
@@ -321,7 +330,8 @@ function mLoadData(data)
 				if (!svcs[o['origin']])
 					return;
 				r = [
-				    svcs[o['origin']][0]['ident'],
+				    dcbyagent[o['origin']],
+				    namebyagent[o['origin']],
 				    o['jobid'],
 				    o['phasei'],
 				    o['phase'] ?
@@ -351,7 +361,8 @@ function mLoadData(data)
 				if (!svcs[o['origin']])
 					return;
 				r = [
-				    svcs[o['origin']][0]['ident'],
+				    dcbyagent[o['origin']],
+				    namebyagent[o['origin']],
 				    o['id'],
 				    o['taskStart'] || 'N/A'
 				];
@@ -423,10 +434,12 @@ function mZoneStateWidget(key, domid)
 	this.zs_data = {};
 	this.zs_table = new mTable(key, {
 	    'domid': domid,
-	    'autolink': [ 0 ],
+	    'autolink': [ 1 ],
 	    'config': {
+		'aaSorting': [ [ 0, 'asc' ], [ 1, 'asc' ] ],
 	        'aoColumns': [
-		    { 'sTitle': 'Agent' },
+		    { 'sTitle': 'DC' },
+		    { 'sTitle': 'Host' },
 		    { 'sTitle': 'Started' },
 		    { 'sTitle': 'Tasks' },
 		    { 'sTitle': 'Disk slop used' },
