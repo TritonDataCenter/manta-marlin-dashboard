@@ -40,8 +40,6 @@
 
     <div class="container">
 
-      <h1>Marlin dashboard</h1>
-
       <div id="mErrorContainer"></div>
 
       <div class="tab-content">
@@ -70,13 +68,6 @@
 	</div>
 
       <div class="row mSection">
-        <div class="span12">
-          <h2>Supervisors</h2>
-	  <table id="mSupervisorTable" class="mDataTable"></table>
-        </div>
-      </div>
-
-      <div class="row mSection">
 	<div class="span12">
         	<h2>Active jobs</h2>
 		<table id="mJobTable" class="mDataTable"></table>
@@ -87,6 +78,7 @@
 	  <li class="active"><a href="#groups" data-toggle="tab">Groups</a></li>
 	  <li><a href="#streams" data-toggle="tab">Streams</a></li>
 	  <li><a href="#disabled-zones" data-toggle="tab">Disabled zones</a></li>
+	  <li><a href="#supervisors" data-toggle="tab">Supervisors</a></li>
 	</ul>
 	
 	<div class="tab-content mBottomTab">
@@ -122,6 +114,18 @@
       </div>
 
 	</div> <!-- /inner tab pane -->
+
+	<div class="tab-pane" id="supervisors">
+      <div class="row mSection">
+        <div class="span11">
+          <h2>Supervisors</h2>
+	  <table id="mSupervisorTable" class="mDataTable"></table>
+        </div>
+      </div>
+	</div> <!-- /inner tab pane -->
+
+
+
 	</div> <!-- /inner tab group -->
 
     </div> <!-- /tab pane -->

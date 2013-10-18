@@ -50,7 +50,7 @@ div.mUpdateTime
 
 table.mDataTable
 {
-	font-size: x-small;
+	font-size: small;
 	margin-left: 0px;
 }
 
@@ -68,6 +68,11 @@ table.mDataTable td
 table.mDataTable td
 {
 	text-align: right;
+}
+
+table.mDataTable td
+{
+	color: #7c7c7c;
 }
 
 /*
