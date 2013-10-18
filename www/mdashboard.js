@@ -79,6 +79,20 @@ var mTableConfig = {
 		{ 'sTitle': 'Last task started' }
 	    ]
 	}
+    },
+    'disabled_zones': {
+	'domid': 'mDisabledZonesTable',
+	'autolink': [ 1, 2 ],
+	'config': {
+	    'aaSorting': [ [ 0, 'asc' ], [ 1, 'asc' ], [ 2, 'asc' ] ],
+	    'aoColumns': [
+		{ 'sTitle': 'DC' },
+		{ 'sTitle': 'Server' },
+		{ 'sTitle': 'Zonename', 'sClass': 'mUuid' },
+		{ 'sTitle': 'Since' },
+		{ 'sTitle': 'Reason', 'sClass': 'mTextBlock' }
+	    ]
+	}
     }
 };
 
@@ -253,6 +267,22 @@ function mLoadData(data)
 		}
 
 		mZoneStates.zs_data = zonedata;
+
+		rows = [];
+		for (k in data.cs_objects['zone']) {
+			o = data.cs_objects['zone'][k][0];
+			if (o['state'] != 'disabled')
+				continue;
+			mDetails[k] = o;
+			rows.push([
+			    dcbyagent[o['origin']] || '-',
+			    namebyagent[o['origin']] || o['origin'],
+			    k,
+			    o['disableTime'],
+			    o['disableErrorMessage']
+			]);
+		}
+		mTables['disabled_zones'].t_rows = rows;
 	}
 
 	rows = [];

@@ -84,8 +84,9 @@
       </div>
 
 	<ul class="nav nav-tabs" id="inner-tabs" data-tabs="tabs">
-	  <li><a href="#groups" data-toggle="tab">Groups</a></li>
+	  <li class="active"><a href="#groups" data-toggle="tab">Groups</a></li>
 	  <li><a href="#streams" data-toggle="tab">Streams</a></li>
+	  <li><a href="#disabled-zones" data-toggle="tab">Disabled zones</a></li>
 	</ul>
 	
 	<div class="tab-content mBottomTab">
@@ -106,6 +107,17 @@
 	<div class="span11">
         	<h2>Running streams</h2>
 		<table id="mStreamsTable" class="mDataTable"></table>
+	</div>
+      </div>
+
+	</div> <!-- /inner tab pane -->
+
+	<div class="tab-pane" id="disabled-zones">
+
+      <div class="row mSection">
+	<div class="span11">
+        	<h2>Disabled zones</h2>
+		<table id="mDisabledZonesTable" class="mDataTable"></table>
 	</div>
       </div>
 
