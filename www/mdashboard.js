@@ -323,12 +323,24 @@ function mLoadData(data)
 				continue;
 
 			mDetails[o['record']['jobId']] = o['record'];
-			extra =
-			    o['record']['name'] ==
+
+			if (o['record']['name'] ==
 			        'interactive compute job' &&
 			    o['record']['phases'][0].exec ==
-			        '/assets/poseidon/public/medusa/agent.sh' ?
-			    '$' : '&nbsp;';
+			        '/assets/poseidon/public/medusa/agent.sh') {
+				extra = '<span class="mHoverText" ' +
+				    'title="mlogin job">$</span>';
+			} else if (!o['record']['timeInputDone']) {
+				extra = '<span class="mHoverText" ' +
+				    'title="job waiting for input">' +
+				    '&hellip;</span>';
+			} else if (o['record']['timeCancelled']) {
+				extra = '<span class="mHoverText" ' +
+				    'title="job was cancelled">' +
+				    'C</span>';
+			} else {
+				extra = '&nbsp;';
+			}
 
 			r = [
 			    o['record']['jobId'],
