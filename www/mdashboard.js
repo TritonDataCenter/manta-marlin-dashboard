@@ -209,22 +209,22 @@ function mLoadData(data)
 	if (data.cs_objects['agent']) {
 		for (k in data.cs_objects['agent']) {
 			o = data.cs_objects['agent'][k][0];
-			mDetails[o['hostname']] = o;
 			r = [
-			    o['datacenter'] || '-',
+			    (o['datacenter'] || '-') + '<br />' +
 			    o['hostname'] || '-',
 			    data.cs_objects['stats'][o['origin']][0]['started'].
 			        substr(5, 14),
-			    o['nTasks'],
 			    o['slopDiskUsed'] + ' / ' +
-			        o['slopDiskTotal'] + 'GB',
+			        o['slopDiskTotal'] + 'GB<br/>' +
 			    o['slopMemUsed'] + ' / ' +
 			        o['slopMemTotal'] + 'MB',
+			    o['nTasks'],
 			    0,	/* total nzones */
 			    0,	/* nbusy */
 			    0,	/* ninit */
 			    0 	/* ndisabled */
 			];
+			mDetails[r[0]] = o;
 			namebyagent[o['origin']] = o['hostname'] || o['origin'];
 			dcbyagent[o['origin']] = o['datacenter'] || '-';
 			rowbyagent[o['origin']] = r;
@@ -238,20 +238,20 @@ function mLoadData(data)
 			if (!r)
 				continue;
 
-			r[6]++;
+			r[4]++;
 			if (o['state'] == 'busy')
-				r[7]++;
+				r[5]++;
 			else if (o['state'] == 'uninit')
-				r[8]++;
+				r[6]++;
 			else if (o['state'] == 'disabled')
-				r[9]++;
+				r[7]++;
 		}
 
 		for (k in rowbyagent) {
 			zonedata[k] = {
 			    'i': 0,
 			    'values': rowbyagent[k],
-			    'data': new Array(rowbyagent[k][6]),
+			    'data': new Array(rowbyagent[k][4]),
 			    'label': svcs[k][0]['ident']
 			};
 		}
@@ -476,16 +476,14 @@ function mZoneStateWidget(key, domid)
 	this.zs_data = {};
 	this.zs_table = new mTable(key, {
 	    'domid': domid,
-	    'autolink': [ 1 ],
+	    'autolink': [ 0 ],
 	    'config': {
-		'aaSorting': [ [ 0, 'asc' ], [ 1, 'asc' ] ],
+		'aaSorting': [ [ 0, 'asc' ] ],
 	        'aoColumns': [
-		    { 'sTitle': 'DC' },
-		    { 'sTitle': 'Host' },
+		    { 'sTitle': 'DC<br/>Host' },
 		    { 'sTitle': 'Started' },
+		    { 'sTitle': 'Disk slop used<br />mem slop used' },
 		    { 'sTitle': 'Tasks' },
-		    { 'sTitle': 'Disk slop used' },
-		    { 'sTitle': 'Mem slop used' },
 		    { 'sTitle': 'Z' },
 		    { 'sTitle': 'B' },
 		    { 'sTitle': 'R' },
