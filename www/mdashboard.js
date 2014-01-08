@@ -38,13 +38,13 @@ var mTableConfig = {
 		{ 'sTitle': '' },
 		{ 'sTitle': 'User' },
 		{ 'sTitle': 'Started' },
-		{ 'sTitle': 'Zones' },
-		{ 'sTitle': 'Asgn' },
-		{ 'sTitle': 'InProc' },
-		{ 'sTitle': 'TasksDisp' },
-		{ 'sTitle': 'TasksComm' },
-		{ 'sTitle': 'Out' },
-		{ 'sTitle': 'Retries' },
+		{ 'sTitle': 'Z' },
+		{ 'sTitle': 'A' },
+		{ 'sTitle': 'Ip' },
+		{ 'sTitle': 'Td' },
+		{ 'sTitle': 'Tc' },
+		{ 'sTitle': 'O' },
+		{ 'sTitle': 'R' },
 		{ 'sTitle': 'Err' }
 	    ]
 	}
