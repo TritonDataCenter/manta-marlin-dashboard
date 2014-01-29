@@ -33,6 +33,7 @@ var mTableConfig = {
 	'domid': 'mJobTable',
 	'autolink': [ 0 ],
 	'config': {
+	    'aaSorting': [ [ 3, 'asc' ] ],
 	    'aoColumns': [
 		{ 'sTitle': 'Jobid', 'sClass': 'mUuid' },
 		{ 'sTitle': '' },
