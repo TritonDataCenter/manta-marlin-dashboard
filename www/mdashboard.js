@@ -123,8 +123,8 @@ function mInit()
 
 	for (k in mTableConfig)
 		mTables[k] = new mTable(k, mTableConfig[k]);
-	mZoneStates = new mZoneStateWidget('zonegrid', 'mZoneStates');
-	spanUpdateTime = document.getElementById('mUpdateTime');
+	mZoneStates = new mZoneStateWidget('zonegrid', 'mZoneStatesTable');
+	spanUpdateTime = document.getElementById('mUpdateTimeLabel');
 	divErrorContainer = document.getElementById('mErrorContainer');
 
 	$('#tabs').tab();
