@@ -481,7 +481,7 @@ function mZoneStateWidget(key, domid)
 	    'config': {
 		'aaSorting': [ [ 0, 'asc' ] ],
 	        'aoColumns': [
-		    { 'sTitle': 'DC<br/>Host' },
+		    { 'sTitle': 'DC<br/>Host', 'sType': 'string' },
 		    { 'sTitle': 'Started' },
 		    { 'sTitle': 'Disk slop used<br />mem slop used' },
 		    { 'sTitle': 'Tasks' },
