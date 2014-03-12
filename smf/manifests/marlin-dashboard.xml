@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!-- Copyright (c) 2014, Joyent, Inc. All rights reserved. -->
+<service_bundle type="manifest" name="marlin-dashboard">
+    <service name="manta/application/marlin-dashboard" type="service" version="1">
+
+	<create_default_instance enabled="false" />
+	<single_instance />
+
+	<dependency name="network"
+		    grouping="require_all"
+		    restart_on="error"
+		    type="service">
+	    <service_fmri value="svc:/network/physical" />
+	</dependency>
+
+	<dependency name="filesystem"
+		    grouping="require_all"
+		    restart_on="error"
+		    type="service">
+	    <service_fmri value="svc:/system/filesystem/local" />
+	</dependency>
+
+	<exec_method type="method"
+		     name="start"
+		     exec="sudo -u marlin ./build/node/bin/node ./bin/server.js ./etc/config-us-east.json &amp;"
+		     timeout_seconds="30">
+	    <method_context working_directory="/opt/smartdc/marlin-dashboard">
+                <!-- Even though this says 'root' we run as marlin. -->
+                <method_credential user="root" />
+                <method_environment>
+                    <envvar name="PATH"
+                            value="/opt/smartdc/marlin-dashboard/build/node/bin:/opt/local/bin:/usr/bin:/usr/sbin:/bin"/>
+                    <envvar name="LD_PRELOAD_32"
+                            value="/usr/lib/extendedFILE.so.1" />
+                    <envvar name="NODE_NDEBUG" value="1" />
+                </method_environment>
+            </method_context>
+	</exec_method>
+
+	<exec_method type="method"
+		     name="stop"
+		     exec=":kill"
+		     timeout_seconds="30" />
+
+	<stability value='Unstable' />
+	<template>
+	    <common_name>
+		<loctext xml:lang="C">Marlin Dashboard.</loctext>
+	    </common_name>
+	</template>
+
+    </service>
+</service_bundle>
