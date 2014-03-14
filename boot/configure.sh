@@ -34,6 +34,7 @@ function manta_setup_marlin_dashboard {
 
     if [[ ! -e $CONFIG ]]; then
         echo "$CONFIG doesn't exist.  Operator intervention required."
+        exit 1;
     fi
 
     ln -f -s $CONFIG $SVC_ROOT/etc/config.json
