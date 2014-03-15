@@ -23,7 +23,7 @@
 
 	<exec_method type="method"
 		     name="start"
-		     exec="sudo -u marlin ./build/node/bin/node ./bin/server.js ./etc/config-us-east.json &amp;"
+		     exec="sudo -u marlin ./build/node/bin/node ./bin/server.js ./etc/config.json &amp;"
 		     timeout_seconds="30">
 	    <method_context working_directory="/opt/smartdc/marlin-dashboard">
                 <!-- Even though this says 'root' we run as marlin. -->
