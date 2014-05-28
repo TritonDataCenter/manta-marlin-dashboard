@@ -24,7 +24,7 @@ function manta_setup_marlin_user {
     cp -r /root/.ssh /home/marlin/.
     chown -R marlin /home/marlin/.ssh
     cat /opt/smartdc/common/etc/config.json | \
-        json -e "manta.sign.key='/home/marlin/.ssh/id_rsa'" \
+        json -e "this.manta.sign.key='/home/marlin/.ssh/id_rsa'" \
         >/home/marlin/manta.config.json
 }
 
