@@ -334,7 +334,7 @@ vasync.pipeline({
 				_self['INSTANCES'] = {};
 				for (var i = 0; i < services.length; ++i) {
 					var s = services[i];
-					var ins = res.successes[i];
+					var ins = res.operations[i].result;
 					_self['SERVICES'][s]['INSTANCES'] = ins;
 					ins.map(function (inst) {
 						_self['INSTANCES'][inst.uuid] =
