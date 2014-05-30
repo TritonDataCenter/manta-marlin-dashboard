@@ -1,0 +1,5 @@
+{
+	"name": "marlin-dashboard",
+	"path": "/opt/smartdc/marlin-dashboard/etc/generate-config.json",
+	"master": true
+}

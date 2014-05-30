@@ -29,17 +29,9 @@ function manta_setup_marlin_user {
 }
 
 function manta_setup_marlin_dashboard {
-    local REGION=$(json -f ${METADATA} REGION)
-    local CONFIG=$SVC_ROOT/etc/config-$REGION.json
-
-    if [[ ! -e $CONFIG ]]; then
-        echo "$CONFIG doesn't exist.  Operator intervention required."
-        exit 1;
-    fi
-
-    ln -f -s $CONFIG $SVC_ROOT/etc/config.json
+    /opt/smartdc/marlin-dashboard/bin/generate-config.js
     if [[ $? != 0 ]]; then
-        echo "Unable to link $CONFIG."
+        echo "Unable to generate marlin dashboard config."
         exit 1;
     fi
 
@@ -58,7 +50,7 @@ echo "Running common setup scripts"
 manta_common_presetup
 
 #echo "Adding local manifest directories"
-#manta_add_manifest_dir "/opt/smartdc/marlin-dashboard"
+manta_add_manifest_dir "/opt/smartdc/marlin-dashboard"
 
 manta_common_setup "marlin-dashboard"
 
