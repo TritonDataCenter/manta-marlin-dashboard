@@ -84,6 +84,7 @@ release: all docs $(SMF_MANIFESTS)
 		$(ROOT)/etc \
 		$(ROOT)/node_modules \
 		$(ROOT)/package.json \
+		$(ROOT)/sapi_manifests \
 		$(ROOT)/smf \
 		$(ROOT)/www \
 		$(RELSTAGEDIR)/root/opt/smartdc/$(NAME)
