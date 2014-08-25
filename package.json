@@ -8,5 +8,6 @@
 		"kang": "0.0.8",
 		"sdc-clients": "git+ssh://git@git.joyent.com:node-sdc-clients.git#c962959",
 		"vasync": "1.5.0"
-	}
+	},
+	"license": "MPL-2.0"
 }
