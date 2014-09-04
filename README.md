@@ -8,7 +8,11 @@
     Copyright (c) 2014, Joyent, Inc.
 -->
 
-# Marlin dashboard
+# manta-marlin-dashboard
+
+This repository is part of the Joyent Manta project.  For contribution
+guidelines, issues, and general documentation, visit the main
+[Manta](http://github.com/joyent/manta) project page.
 
 This is the temporary home of the Marlin dashboard.  It will eventually be
 folded into a proper Manta operations dashboard.
