@@ -200,6 +200,39 @@ function findServer(server, cb) {
 }
 
 
+function findServerIp(network, server) {
+	var ip = null;
+	var taggedNic = null;
+	var nics = server.sysinfo['Network Interfaces'];
+	var nns = Object.keys(nics);
+	for (var i = 0; i < nns.length; ++i) {
+		var nn = nns[i];
+		var nic = nics[nn];
+		if (nic['NIC Names'].indexOf(network) !== -1) {
+			ip = nic['ip4addr'];
+			taggedNic = nn;
+			break;
+		}
+	}
+
+	// If the physical nic doesn't have an ip address, it's probably
+	// on a vnic
+	if (taggedNic !== null && ip === '') {
+		var vnics = server.sysinfo['Virtual Network Interfaces'];
+		var labs = Object.keys(vnics);
+		for (i = 0; i < labs.length; ++i) {
+			var vnic = vnics[labs[i]];
+			if (vnic['Host Interface'] === taggedNic) {
+				ip = vnic.ip4addr;
+				break;
+			}
+		}
+	}
+
+	return (ip === null || ip === '' ? null : ip);
+}
+
+
 
 // --- Main
 
@@ -228,7 +261,7 @@ _self['REGION'] = checkOpts('region');
 _self['DATACENTER'] = checkOpts('datacenter');
 _self['DNS_DOMAIN'] = checkOpts('dns_domain');
 _self['UFDS_CONFIG'] = checkOpts('ufds');
-_self['NETWORK_TAG'] = 'admin';
+_self['NETWORK_TAG'] = 'manta';
 _self['OUTPUT_FILENAME'] = '/opt/smartdc/marlin-dashboard/etc/config.json';
 
 vasync.pipeline({
@@ -468,19 +501,7 @@ vasync.pipeline({
 					}, m);
 					return (subcb(new Error(m)));
 				}
-				ip = null;
-				nics = sv.sysinfo['Network Interfaces'];
-				var nns = Object.keys(nics);
-				for (j = 0; j < nns.length; ++j) {
-					var nn = nns[j];
-					nic = nics[nn];
-					nt = _self['NETWORK_TAG'];
-					if (nic['NIC Names'].indexOf(nt) !==
-					    -1) {
-						ip = nic['ip4addr'];
-						break;
-					}
-				}
+				ip = findServerIp(_self['NETWORK_TAG'], sv);
 				if (ip === null) {
 					m = 'didnt find ip for server';
 					_self.log.error({
