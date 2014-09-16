@@ -222,7 +222,8 @@ function findServerIp(network, server) {
 		var labs = Object.keys(vnics);
 		for (i = 0; i < labs.length; ++i) {
 			var vnic = vnics[labs[i]];
-			if (vnic['Host Interface'] === taggedNic) {
+			if (vnic['Host Interface'] === taggedNic &&
+			    labs[i].indexOf(network) === 0) {
 				ip = vnic.ip4addr;
 				break;
 			}
