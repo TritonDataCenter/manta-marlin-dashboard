@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright (c) 2014, Joyent, Inc.
+ * Copyright (c) 2015, Joyent, Inc.
  */
 
 /*
@@ -15,6 +15,7 @@
 
 var mod_fs = require('fs');
 var mod_http = require('http');
+var mod_jsprim = require('jsprim');
 var mod_path = require('path');
 var mod_url = require('url');
 
@@ -127,6 +128,7 @@ function onMarlinRequest(request, response)
 				snapshot.error = err.toString();
 		}
 
+		postprocessSnapshot(snapshot);
 		mPending.forEach(function (res) {
 			if (!snapshot) {
 				res.writeHead(500, mkHeaders({}));
@@ -169,6 +171,70 @@ function onFileRequest(request, response, path)
 
 		response.writeHead(200, mkHeaders({}));
 		response.end(contents);
+	});
+}
+
+/*
+ * For space reasons, trim out parts of the snapshot that are unused by clients.
+ * If these parts are _never_ used, then we should consider removing them from
+ * the kang output of the corresponding components.  The stuff we remove here
+ * are items included in kang output because it's useful for local debugging,
+ * but not for a global status overview.
+ */
+function postprocessSnapshot(snapshot)
+{
+	var zones, newzones;
+
+	/*
+	 * The list of requests being serviced by each agent at any given time
+	 * is usually small, but it's not very interesting for the global status
+	 * overview.
+	 */
+	delete (snapshot.cs_objects['request']);
+
+	mod_jsprim.forEachKey(snapshot.cs_objects['job'], function (_, jobs) {
+		jobs.forEach(function (j) {
+			/*
+			 * Agents report the job's Moray record for the
+			 * convenience of local debugging, but we already have
+			 * that from the jobsupervisor so we don't need N copies
+			 * of it.
+			 */
+			if (mod_jsprim.startsWith(j.origin, 'marlin.agent')) {
+				delete (j.record);
+				return;
+			}
+
+			/*
+			 * For job records, remove the user's credentials.  Even
+			 * public keys just clutter output.
+			 */
+			if (j.hasOwnProperty('record') &&
+			    j.record.hasOwnProperty('auth') &&
+			    j.record.auth.hasOwnProperty('conditions') &&
+			    j.record.auth.conditions.hasOwnProperty('owner')) {
+				delete (j.record.auth.conditions.owner.keys);
+			}
+		});
+	});
+
+	/*
+	 * Transform the per-zone output into something much more concise for
+	 * the dashboard.
+	 */
+	zones = snapshot.cs_objects['zone'];
+	delete (snapshot.cs_objects['zone']);
+	snapshot.cs_objects['zonesbyorigin'] = newzones = {};
+	mod_jsprim.forEachKey(zones, function (zonename, zonelist) {
+		var zone = zonelist[0];
+		if (!newzones.hasOwnProperty(zone.origin))
+			newzones[zone.origin] = [];
+		newzones[zone.origin].push({
+		    'zonename': zonename,
+		    'state': zone.state,
+		    'disableTime': zone.disableTime,
+		    'disableErrorMessage': zone.disableErrorMessage
+		});
 	});
 }
 

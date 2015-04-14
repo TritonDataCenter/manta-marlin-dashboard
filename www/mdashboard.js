@@ -207,13 +207,14 @@ function mLoadData(data)
 	mSnapshot = data;
 	mDetails = {};
 
-	var svcs, rows, k, o, r, i, e;
+	var svcs, rows, k, o, r, i, e, origin;
 	var rowbyagent = {};
 	var dcbyagent = {};
 	var namebyagent = {};
 	var zonedata = {};
 	var rowbyjob = {};
 	var extra;
+	var zones;
 
 	svcs = data.cs_objects['service'];
 
@@ -242,20 +243,22 @@ function mLoadData(data)
 		}
 	}
 
-	if (data.cs_objects['zone']) {
-		for (k in data.cs_objects['zone']) {
-			o = data.cs_objects['zone'][k][0];
-			r = rowbyagent[o['origin']];
+	if (data.cs_objects['zonesbyorigin']) {
+		for (origin in data.cs_objects['zonesbyorigin']) {
+			r = rowbyagent[origin];
 			if (!r)
 				continue;
 
-			r[4]++;
-			if (o['state'] == 'busy')
-				r[5]++;
-			else if (o['state'] == 'uninit')
-				r[6]++;
-			else if (o['state'] == 'disabled')
-				r[7]++;
+			zones = data.cs_objects['zonesbyorigin'][origin];
+			zones.forEach(function (zo) {
+				r[4]++;
+				if (zo['state'] == 'busy')
+					r[5]++;
+				else if (zo['state'] == 'uninit')
+					r[6]++;
+				else if (zo['state'] == 'disabled')
+					r[7]++;
+			});
 		}
 
 		for (k in rowbyagent) {
@@ -267,32 +270,33 @@ function mLoadData(data)
 			};
 		}
 
-		for (k in data.cs_objects['zone']) {
-			o = data.cs_objects['zone'][k][0];
-			r = rowbyagent[o['origin']];
+		rows = [];
+		for (origin in data.cs_objects['zonesbyorigin']) {
+			r = rowbyagent[origin];
 			if (!r)
 				continue;
 
-			e = zonedata[o['origin']];
-			e['data'][e['i']++] = [ k, o['state'][0] ];
+			zones = data.cs_objects['zonesbyorigin'][origin];
+			zones.forEach(function (zo) {
+				e = zonedata[origin];
+				e['data'][e['i']++] =
+				    [ zo['zonename'], zo['state'][0] ];
+
+				mDetails[zo['zonename']] = zo;
+				if (zo['state'] != 'disabled')
+					return;
+
+				rows.push([
+				    dcbyagent[origin] || '-',
+				    namebyagent[origin] || origin,
+				    zo['zonename'],
+				    zo['disableTime'],
+				    zo['disableErrorMessage']
+				]);
+			});
 		}
 
 		mZoneStates.zs_data = zonedata;
-
-		rows = [];
-		for (k in data.cs_objects['zone']) {
-			o = data.cs_objects['zone'][k][0];
-			if (o['state'] != 'disabled')
-				continue;
-			mDetails[k] = o;
-			rows.push([
-			    dcbyagent[o['origin']] || '-',
-			    namebyagent[o['origin']] || o['origin'],
-			    k,
-			    o['disableTime'],
-			    o['disableErrorMessage']
-			]);
-		}
 		mTables['disabled_zones'].t_rows = rows;
 	}
 
