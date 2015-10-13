@@ -6,7 +6,7 @@
 	"dependencies": {
 		"bunyan": "0.23.0",
 		"jsprim": "0.6.1",
-		"kang": "0.0.8",
+		"kang": "1.0.0",
 		"sdc-clients": "git+ssh://git@github.com:joyent/node-sdc-clients.git#c962959",
 		"vasync": "1.5.0"
 	},

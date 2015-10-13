@@ -30,7 +30,10 @@ var mHeaders = {
 };
 var mLastSnapshot = undefined;
 var mLastTime = undefined;
+var mLastTimeStart = undefined;
 var mPending = [];
+var mTickTimeout = 5000;
+var mWarnTimeout = 20000;
 
 function usage()
 {
@@ -66,6 +69,24 @@ function main()
 	mServer.listen(mConf['listenPort'], function () {
 		console.log('server started on port %s', mConf['listenPort']);
 	});
+
+	tick();
+}
+
+function tick()
+{
+	var now, delta;
+
+	if (mPending.length > 0) {
+		now = new Date();
+		delta = now.getTime() - mLastTime;
+		if (delta > mWarnTimeout) {
+			console.log('%s: request pending for %d ' +
+			    'milliseconds', now.toISOString(), delta);
+		}
+	}
+
+	setTimeout(tick, mTickTimeout);
 }
 
 function onRequest(request, response)
@@ -104,8 +125,9 @@ function mkHeaders(headers)
 
 function onMarlinRequest(request, response)
 {
-	if (mLastSnapshot !== undefined &&
-	    Date.now() - mLastTime < 1000) {
+	var now = Date.now();
+
+	if (mLastSnapshot !== undefined && now - mLastTime < 1000) {
 		response.writeHead(200, mkHeaders({}));
 		response.end(JSON.stringify(mLastSnapshot));
 		return;
@@ -115,10 +137,12 @@ function onMarlinRequest(request, response)
 	if (mPending.length > 1)
 		return;
 
+	mLastTimeStart = now;
 	mod_kang.knFetchAll({
 	    'sources': mSources,
 	    'clientOptions': {
-		'connectTimeout': 5000
+		'connectTimeout': 5000,
+		'requestTimeout': 30000
 	    }
 	}, function (err, snapshot) {
 		if (err) {
