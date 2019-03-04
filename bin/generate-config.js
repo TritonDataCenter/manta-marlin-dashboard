@@ -7,13 +7,14 @@
  */
 
 /*
- * Copyright (c) 2014, Joyent, Inc.
+ * Copyright (c) 2019, Joyent, Inc.
  */
 
 var bunyan = require('bunyan');
 var fs = require('fs');
 var path = require('path');
 var sdc = require('sdc-clients');
+var ufds_mod = require('ufds');
 var vasync = require('vasync');
 
 var LOG = bunyan.createLogger({
@@ -79,7 +80,7 @@ function setupSingleDcClients(_, cb) {
 					'ufdsConfig': self.UFDS_CONFIG
 				}, 'connecting to ufds');
 
-				self['UFDS'] = new sdc.UFDS(self.UFDS_CONFIG);
+				self['UFDS'] = new ufds_mod(self.UFDS_CONFIG);
 
 				self['UFDS'].on('ready', function (err) {
 					self.log.debug({
@@ -99,7 +100,8 @@ function setupSingleDcClients(_, cb) {
 				self['SAPI'] = new sdc.SAPI({
 					log: self.log,
 					url: url,
-					agent: false
+					agent: false,
+					version: '*'
 				});
 				subcb();
 			}

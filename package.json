@@ -1,13 +1,14 @@
 {
 	"name": "marlin-dashboard",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "marlin dashboard server",
 	"private": true,
 	"dependencies": {
 		"bunyan": "0.23.0",
 		"jsprim": "0.6.1",
 		"kang": "1.0.1",
-		"sdc-clients": "git+ssh://git@github.com:joyent/node-sdc-clients.git#c962959",
+		"sdc-clients": "12.0.0",
+		"ufds": "1.5.0",
 		"vasync": "1.5.0"
 	},
 	"license": "MPL-2.0"
