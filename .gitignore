@@ -1,2 +1,5 @@
-node_modules
-build
+/make_stamps
+/node_modules
+/bits
+/build
+marlin-dashboard-pkg*.gz
