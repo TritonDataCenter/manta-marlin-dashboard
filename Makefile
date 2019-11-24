@@ -60,7 +60,7 @@ ROOT		:= $(shell pwd)
 RELSTAGEDIR	:= /tmp/$(NAME)-$(STAMP)
 
 BASE_IMAGE_UUID = fd2cc906-8938-11e3-beab-4359c665ac99
-BUILDIMAGE_NAME = manta-marlin-dashboard
+BUILDIMAGE_NAME = mantav1-marlin-dashboard
 BUILDIMAGE_DESC	= Manta marlin dashboard
 AGENTS		= amon config registrar
 
