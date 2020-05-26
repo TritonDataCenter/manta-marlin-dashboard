@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 #
@@ -63,6 +63,9 @@ BASE_IMAGE_UUID = fd2cc906-8938-11e3-beab-4359c665ac99
 BUILDIMAGE_NAME = mantav1-marlin-dashboard
 BUILDIMAGE_DESC	= Manta marlin dashboard
 AGENTS		= amon config registrar
+
+# For mantav1, specify the branch to compare copyrights with
+ENGBLD_CHECK_COPYRIGHT_ARGS = -b mantav1
 
 #
 # v8plus uses the CTF tools as part of its build, but they can safely be
